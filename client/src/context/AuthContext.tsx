@@ -1,5 +1,5 @@
-import React, { createContext, useState, useEffect } from 'react';
-import axios from 'axios';
+import React, { createContext, useState, useEffect } from "react";
+import axios from "axios";
 
 interface User {
   _id: string;
@@ -16,7 +16,12 @@ interface AuthContextType {
   loading: boolean;
   error: string | null;
   login: (email: string, password: string) => Promise<void>;
-  register: (name: string, email: string, password: string, role: string) => Promise<void>;
+  register: (
+    name: string,
+    email: string,
+    password: string,
+    role: string
+  ) => Promise<void>;
   logout: () => void;
 }
 
@@ -30,13 +35,15 @@ export const AuthContext = createContext<AuthContextType>({
   logout: () => {},
 });
 
-export const AuthProvider: React.FC<{children: React.ReactNode}> = ({ children }) => {
+export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-  const API_URL = 'http://localhost:5000/api';
+  const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
 
   // Set axios defaults
   axios.defaults.baseURL = API_URL;
@@ -47,14 +54,14 @@ export const AuthProvider: React.FC<{children: React.ReactNode}> = ({ children }
       if (localStorage.token) {
         setAuthToken(localStorage.token);
         try {
-          const res = await axios.get('/auth/me');
+          const res = await axios.get("/auth/me");
           setUser(res.data.user);
           setIsAuthenticated(true);
         } catch (err) {
-          localStorage.removeItem('token');
+          localStorage.removeItem("token");
           setUser(null);
           setIsAuthenticated(false);
-          setError('Session expired. Please login again.');
+          setError("Session expired. Please login again.");
         }
       }
       setLoading(false);
@@ -66,9 +73,9 @@ export const AuthProvider: React.FC<{children: React.ReactNode}> = ({ children }
   // Set auth token for axios requests
   const setAuthToken = (token: string) => {
     if (token) {
-      axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+      axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
     } else {
-      delete axios.defaults.headers.common['Authorization'];
+      delete axios.defaults.headers.common["Authorization"];
     }
   };
 
@@ -77,43 +84,53 @@ export const AuthProvider: React.FC<{children: React.ReactNode}> = ({ children }
     setLoading(true);
     setError(null);
     try {
-      const res = await axios.post('/auth/login', { email, password });
-      
+      const res = await axios.post("/auth/login", { email, password });
+
       // Set token in localStorage
-      localStorage.setItem('token', res.data.token);
-      
+      localStorage.setItem("token", res.data.token);
+
       // Set auth token in axios headers
       setAuthToken(res.data.token);
-      
+
       // Set user state
       setUser(res.data.user);
       setIsAuthenticated(true);
     } catch (err: any) {
-      setError(err.response?.data?.message || 'Login failed');
+      setError(err.response?.data?.message || "Login failed");
       setIsAuthenticated(false);
-      localStorage.removeItem('token');
+      localStorage.removeItem("token");
     }
     setLoading(false);
   };
 
   // Register user
-  const register = async (name: string, email: string, password: string, role: string) => {
+  const register = async (
+    name: string,
+    email: string,
+    password: string,
+    role: string
+  ) => {
     setLoading(true);
     setError(null);
     try {
-      const res = await axios.post('/auth/register', { name, email, password, role });
-      
+      const res = await axios.post("/auth/register", {
+        name,
+        email,
+        password,
+        role,
+      });
+
       // Set token in localStorage
-      localStorage.setItem('token', res.data.token);
-      
+      localStorage.setItem("token", res.data.token);
+
       // Set auth token in axios headers
       setAuthToken(res.data.token);
-      
+
       // Set user state
       setUser(res.data.user);
       setIsAuthenticated(true);
     } catch (err: any) {
-      setError(err.response?.data?.message || 'Registration failed');
+      setError(err.response?.data?.message || "Registration failed");
       setIsAuthenticated(false);
     }
     setLoading(false);
@@ -121,8 +138,8 @@ export const AuthProvider: React.FC<{children: React.ReactNode}> = ({ children }
 
   // Logout user
   const logout = () => {
-    localStorage.removeItem('token');
-    setAuthToken('');
+    localStorage.removeItem("token");
+    setAuthToken("");
     setUser(null);
     setIsAuthenticated(false);
   };
