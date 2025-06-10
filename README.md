@@ -2,7 +2,7 @@
 
 ## Overview
 
-The **PG Management System** is a comprehensive web application designed to streamline the process of finding, listing, and managing Paying Guest (PG) accommodations. It serves as a digital marketplace connecting PG seekers with property owners, making the accommodation search process efficient and transparent.
+The **PG Management System** is a comprehensive web application designed to streamline the process of finding, listing, and managing Paying Guest (PG) accommodations. It serves as a digital marketplace connecting PG seekers with property owners, making the accommodation search process efficient.
 
 ## What It Does
 
